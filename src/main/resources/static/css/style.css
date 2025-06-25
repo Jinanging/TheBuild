@@ -1,0 +1,27 @@
+@charset "UTF-8";
+
+#wrap {
+	width:1200px;
+	margin:0 auto;
+}
+
+header {
+	height:100px;
+}
+
+.contents > .user-box {
+	width:400px;
+	height : 500px;
+}
+
+footer {
+	height:100px;
+}
+
+.login-bg{
+	background-color : #cccccc;
+}
+
+.build-bg {
+	background-image : url("/static/css/temple-7692729_1920.png");
+}

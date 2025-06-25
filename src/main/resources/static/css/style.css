@@ -20,8 +20,14 @@ footer {
 
 .login-bg{
 	background-color : #cccccc;
+	opacity : 0.9;
 }
 
 .build-bg {
 	background-image : url("/static/css/temple-7692729_1920.png");
+}
+
+.font{
+	font-family: 'Tangerine', sans-serif;
+	font-size: 40px;
 }

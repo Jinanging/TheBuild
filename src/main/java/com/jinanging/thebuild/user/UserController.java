@@ -5,9 +5,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 // view controller
-
-@RequestMapping("/user")
 @Controller
+@RequestMapping("/user")
 public class UserController {
 	
 	@GetMapping("/join-view")
@@ -25,5 +24,6 @@ public class UserController {
 		return "user/profile";
 	}
 	
+
 
 }

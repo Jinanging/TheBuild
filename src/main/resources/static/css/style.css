@@ -5,13 +5,46 @@
 	margin:0 auto;
 }
 
+.logo-menu{
+	width:200px;
+	
+}
+
+
 header {
+	width : 200px;
 	height:100px;
+}
+
+nav {
+	width : 200px;
 }
 
 .contents > .user-box {
 	width:400px;
 	height : 500px;
+}
+
+
+.post-box{
+	width: 1000px;
+	
+}
+
+.create-box{
+	width: 800px;
+	height: 800px;
+	
+}
+
+.user-info{
+	width :  1000px;
+	height : 250px;
+}
+
+.profile-info{
+	width : 500px;
+	height: 130px;
 }
 
 footer {
@@ -30,4 +63,8 @@ footer {
 .font{
 	font-family: 'Tangerine', sans-serif;
 	font-size: 40px;
+}
+
+.origin-bg{
+	background-color : #000000;
 }

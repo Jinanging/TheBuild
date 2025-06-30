@@ -20,6 +20,16 @@
 		</section>
 		
 		<script layout:fragment="script">
+			// 회원가입 중복 아이디 추가구성하기 
+			var isUnchecked;
+
+			/* $("#idInput").on("input",function(){
+				// 중복확인 재 확인 값 변하면 초기화
+				
+				isUnchecked = false;
+				
+			}); */
+		
 			$("#IsduplicateBtn").on("click",function(){
 				let id = $("#idInput").val();
 				
@@ -80,10 +90,7 @@
 			    }
 			    
 
-			    if(!isAvailable) {
-	
-			        return; 
-			    }
+		
 				
 			    
 				if(password == ""){

@@ -3,8 +3,15 @@ package com.jinanging.thebuild.user.repository;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import com.jinanging.thebuild.user.domain.User;
+
 @Mapper
 public interface UserRepository {
+	
+	public User selectUser(
+			@Param("loginId") String loginId
+			, @Param("password") String password);
+	
 	
 	
 	

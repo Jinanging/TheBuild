@@ -5,7 +5,7 @@
     <section layout:fragment="contents" class="contents d-flex justify-content-center">
         <div class="d-flex post-box origin-bg justify-content-center align-items-center">
             <div class="create-box origin-bg">
-                <h1 class="text-white mb-4">피드 입력</h1>
+                <h1 class="text-white mb-4">피드 상세</h1>
                 
                 <label for="titleInput" class="font-weight-bold text-white">제목을 입력하세요</label>
                 <input id="titleInput" type="text" class="form-control mt-1" placeholder="제목을 입력하세요">
@@ -23,48 +23,3 @@
             </div>      
         </div>
     </section>
-    
-    <script layout:fragment="script">
-		$("#saveBtn").on("click", function () {
-		    let title = $("#titleInput").val();
-		    let contents = $("#contentsInput").val();
-		    let files = $("#imageInput")[0].files;
-		    
-		    if (title == "") {
-				alert("제목을 입력하세요");
-				return;
-			}
-	
-			if (contents == "") {
-				alert("내용을 입력하세요");
-				return;
-			}
-		
-		    let formData = new FormData();
-		    formData.append("title", title);
-		    formData.append("contents", contents);
-		    for (let i = 0; i < files.length; i++) {
-		        formData.append("images", files[i]);
-		    }
-		
-		    $.ajax({
-		        type: "post",
-		        url: "/post/create",
-		        data: formData,
-		        processData: false,
-		        contentType: false,
-		        success: function (response) {
-		            if (response.result === "success") {
-		                location.href = "/post/list-view";
-		            } else {
-		                alert("글 작성 실패");
-		            }
-		        },
-		        error: function () {
-		            alert("글 작성 중 에러 발생!");
-		        }
-		    });
-		});
-	</script>
-
-</html>

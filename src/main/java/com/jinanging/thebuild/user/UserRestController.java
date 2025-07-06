@@ -53,6 +53,12 @@ public class UserRestController {
 			
 			session.setAttribute("userName", user.getNickName());
 			
+			session.setAttribute("profile", user.getProfile());
+			
+			session.setAttribute("introduce", user.getIntroduce());
+			
+			
+			
 			
 		}
 		else {

@@ -2,12 +2,24 @@
 <html xmlns:th="http://www.thymeleaf.org" 
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/origin}">
-		<section layout:fragment="contents" class="contents container">
-			<div class="row justify-content-center">
-		    	<div class="col-auto">
-		      		<div class="feed bg-warning">피드 1</div>
-		      		<div class="feed bg-success">피드 2</div>
-		    	</div>
-		  </div>
-		</section>
-		
+	<section layout:fragment="contents" class="contents container">
+		<div class="row justify-content-center">
+	    	<div class="col-auto" >
+	      		<div class="feed bg-white">
+	      			<div class="id border border-dark"> @ jinan</div>
+	      			<div class="photo border border-dark">
+						<img src = "/static/css/temple-7692729_1920.png" width="700" height="300" />
+					</div>
+	      			<div class="main border border-dark">우하하하하</div>
+	      			<div class="border border-dark">@marondal 재밌네요 ㅎㅎ</div>
+	      		</div>
+	      		<div class="feed">
+	      			<div class="id bg-success"> 아이디</div>
+	      			<div class="photo bg-danger">사진</div>
+	      			<div class="contents bg-success">내용</div>
+	      			<div class="comments bg-white">댓글</div>
+	      		</div>
+	    	</div>
+	  	</div>
+	</section>
+</html>

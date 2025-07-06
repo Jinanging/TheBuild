@@ -26,8 +26,23 @@ nav {
 }
 
 .feed {
-	width: 800px;
-	height: 600px;
+	width: 700px;
+}
+
+.id{
+	height :30px;
+}
+.photo{
+	height :300px;
+}
+
+.main{
+	width:700px;	
+}
+
+.comments{
+	width:700px;	
+	
 }
 
 .post-box{
@@ -61,6 +76,7 @@ footer {
 }
 
 .build-bg {
+
 	background-image : url("/static/css/temple-7692729_1920.png");
 }
 

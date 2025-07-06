@@ -10,8 +10,15 @@ public class User {
 	private String nickName;
 	private String introduce;
 	private String email;
+	private String profile;
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
+	public String getProfile() {
+		return profile;
+	}
+	public void setProfile(String profile) {
+		this.profile = profile;
+	}
 	public long getId() {
 		return id;
 	}

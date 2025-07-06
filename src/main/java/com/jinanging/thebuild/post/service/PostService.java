@@ -26,6 +26,12 @@ public class PostService {
         this.postImageRepository = postImageRepository;
     }
     
+    public List<Post> getAllPostsWithImages() {
+        return postRepository.findAllPostsWithImages();
+    }
+
+    
+    
    
     
     public List<Post> getPostList(){

@@ -1,5 +1,7 @@
 package com.jinanging.thebuild.user.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.jinanging.thebuild.common.MD5HashingEncoder;
@@ -20,6 +22,10 @@ public class UserService {
 		this.userRepository = userRepository;
 		
 	}
+	
+	public List<User> getUsersByIds(List<Long> userIds){
+        return userRepository.selectUsersByIds(userIds);
+    }
 	
 	public User getUser(
 			String loginId

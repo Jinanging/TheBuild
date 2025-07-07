@@ -6,7 +6,6 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import com.jinanging.thebuild.post.domain.Post;
 import com.jinanging.thebuild.post.domain.PostImage;
 
 public interface PostImageRepository extends JpaRepository<PostImage, Long> {

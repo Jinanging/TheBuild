@@ -11,7 +11,8 @@ import com.jinanging.thebuild.user.domain.User;
 @Mapper
 public interface UserRepository {
 	
-	  List<User> selectUsersByIds(@Param("userIds") List<Long> userIds);
+	List<User> selectUsersByIds(@Param("userIds") List<Long> userIds);
+
 	
 	public User selectUser(
 			@Param("loginId") String loginId

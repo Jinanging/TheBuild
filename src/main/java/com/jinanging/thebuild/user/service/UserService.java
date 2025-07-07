@@ -1,5 +1,6 @@
 package com.jinanging.thebuild.user.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -23,8 +24,14 @@ public class UserService {
 		
 	}
 	
-	public List<User> getUsersByIds(List<Long> userIds){
-        return userRepository.selectUsersByIds(userIds);
+	public List<User> getUsersByIds(List<Long> userId){
+		
+		if (userId == null || userId.isEmpty()) {
+		    return new ArrayList<>();
+		}
+		else {
+        return userRepository.selectUsersByIds(userId);
+		}
     }
 	
 	public User getUser(

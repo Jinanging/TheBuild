@@ -11,6 +11,7 @@ import com.jinanging.thebuild.post.domain.Post;
 import com.jinanging.thebuild.post.domain.PostImage;
 import com.jinanging.thebuild.post.repository.PostImageRepository;
 import com.jinanging.thebuild.post.repository.PostRepository;
+import com.jinanging.thebuild.user.service.UserService;
 
 import jakarta.transaction.Transactional;
 
@@ -18,13 +19,18 @@ import jakarta.transaction.Transactional;
 @Transactional
 public class PostService {
 
-    private final PostRepository postRepository;
-    private final PostImageRepository postImageRepository;
+    	private final PostImageRepository postImageRepository;
+	 	private final PostRepository postRepository;
+	    private final LikeService likeService;
+	    private final UserService userService;
 
-    public PostService(PostRepository postRepository, PostImageRepository postImageRepository) {
-        this.postRepository = postRepository;
-        this.postImageRepository = postImageRepository;
-    }
+	    public PostService(PostRepository postRepository, LikeService likeService,
+	                        UserService userService, PostImageRepository postImageRepository) {
+	        this.postRepository = postRepository;
+	        this.postImageRepository = postImageRepository;
+	        this.likeService = likeService;
+	        this.userService = userService;
+	    }
     
     public List<Post> getAllPostsWithImages() {
         return postRepository.findAllPostsWithImages();

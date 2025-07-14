@@ -1,18 +1,14 @@
-package com.jinanging.thebuild.post.domain;
+package com.jinanging.thebuild.user.domain;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,19 +19,20 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-@Table(name = "`post`")
+@Table(name = "`follow`")
 @Entity
-public class Post {
+public class Follow {
+	
 	
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
-	private long userId;
-	private String title;
-	private String contents;
 	
-	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PostImage> images = new ArrayList<>();
+	// session에서 가져올 값 param
+	private long userId;
+	
+	// post에서 가져올 값 param
+	private long follwingId;
 	
 	@CreationTimestamp
 	private LocalDateTime createdAt;
@@ -43,11 +40,6 @@ public class Post {
 	@UpdateTimestamp
 	private LocalDateTime updatedAt;
 	
-	
-	public void addImage(PostImage postImage) {
-	    images.add(postImage);
-	    postImage.setPost(this);
-	}
 	
 
 }

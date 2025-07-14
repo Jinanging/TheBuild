@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -14,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.jinanging.thebuild.post.dto.CommentDto;
 import com.jinanging.thebuild.post.service.CommentService;
 import com.jinanging.thebuild.post.service.LikeService;
+import com.jinanging.thebuild.post.service.PostDtoService;
 import com.jinanging.thebuild.post.service.PostService;
 
 import jakarta.servlet.http.HttpSession;
@@ -25,12 +27,28 @@ public class PostRestController {
     private final PostService postService;
     private final LikeService likeService;
     private final CommentService commentService;
+    private final PostDtoService postDtoService;
 
-    public PostRestController(PostService postService, LikeService likeService, CommentService commentService) {
+    public PostRestController(PostService postService, LikeService likeService, CommentService commentService, PostDtoService postDtoService) {
         this.postService = postService;
         this.likeService = likeService;
         this.commentService = commentService;
+        this.postDtoService = postDtoService;
     }
+    @DeleteMapping("/delete")
+	public Map<String,String> deletePost(
+			@RequestParam long postId){
+		Map<String,String> resultMap = new HashMap<>();
+		if(postDtoService.deletPost(postId)) {
+			resultMap.put("result", "success");
+		}
+		else {
+			resultMap.put("result", "fail");
+			
+		}
+		return resultMap;
+	}
+    
 
     // 좋아요 토글
     @PostMapping("/like")

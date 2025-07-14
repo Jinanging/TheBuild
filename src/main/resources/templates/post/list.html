@@ -1,177 +1,230 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/origin}">
-
-<section layout:fragment="contents" class="contents container">
-    <div class="row justify-content-center">
-        <div class="col-auto">
-            <div th:each="post : ${posts}" class="feed bg-white border rounded p-3 mb-4 shadow-sm">
-                <!-- 작성자 닉네임 -->
-                <div th:text="'@' + ${post.nickname}" class="id border-bottom font-weight-bold mb-2"></div>
-
-                <!-- 이미지 출력 -->
-                <div class="photo border mb-2" style="overflow: hidden;">
-                    <div th:each="img : ${post.imagePaths}" th:if="${post.imagePaths != null}">
-                        <img th:src="@{${img}}"
-                             th:alt="'Image ' + ${img}"
-                             width="700" height="300"
-                             class="w-100 border border-secondary"
-                             style="object-fit: cover;" />
-                    </div>
-                </div>
-
-                <!-- 게시글 제목 -->
-                <div th:text="${post.title}" class="main font-weight-bold mb-2" style="font-size: 1.25rem;"></div>
-
-                <!-- 옵션 (좋아요 버튼, 댓글 버튼) -->
-                <div class="option d-flex align-items-center gap-3 mb-2">
-                    <button type="button"
-					        class="btn btn-sm likeBtn"
-					        th:class="${post.isLiked} ? 'btn btn-danger btn-sm likeBtn' : 'btn btn-outline-danger btn-sm likeBtn'"
-					        th:data-post-id="${post.postId}"
-					        th:data-liked="${post.isLiked != null ? post.isLiked : false}">
-					    <i th:class="${post.isLiked} ? 'bi bi-heart-fill text-danger' : 'bi bi-heart'"></i>
-					    좋아요 <span class="likeCount" th:text="${post.likeCount}">0</span>
-					</button>
-
-
-                    <button type="button" class="btn btn-outline-secondary btn-sm commentToggleBtn"
-                            th:data-post-id="${post.postId}">
-                        <i class="bi bi-chat"></i> 댓글
-                    </button>
-                </div>
-
-                <!-- 댓글 목록 (초기엔 숨김) -->
-                <div class="commentList mt-2 border-top pt-2"
-                     th:attr="data-post-id=${post.postId}" style="display: none;">
-                    <div class="comments" style="width: 100%;">
-                        <div th:each="comment : ${post.comments}" class="comment border-bottom py-1">
-                            <p class="mb-1"><strong th:text="${comment.nickname}">작성자</strong>: <span th:text="${comment.content}">댓글 내용</span></p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 댓글 입력 폼 (초기엔 숨김) -->
-                <div class="comment-form d-flex align-items-start mt-2"
-                     th:attr="data-post-id=${post.postId}" style="display: none; gap: 0.5rem;">
-                    <textarea class="form-control form-control-sm commentInput"
-                              placeholder="댓글을 입력하세요" rows="2" style="flex-grow: 1;"></textarea>
-                    <button type="button" class="btn btn-secondary btn-sm submitComment"
-                            style="white-space: nowrap; height: calc(2.25rem + 2px);">
-                        작성
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<script layout:fragment="script">
-    // 좋아요 버튼 클릭 이벤트
-    $('.likeBtn').click(function(e) {
-        e.preventDefault();
-        var $likeButton = $(this);
-        var postId = $likeButton.data('post-id');
-        var isLiked = $likeButton.data('liked');
-        var $icon = $likeButton.find('i');
-
-        $.ajax({
-            url: '/post/like',
-            type: 'POST',
-            data: { postId: postId },
-            success: function(response) {
-                if (response.status === 'success') {
-                    // 버튼 스타일 변경
-                    if (isLiked) {
-                        $likeButton.removeClass('btn-danger').addClass('btn-outline-danger');
-                        $icon.removeClass('bi-heart-fill text-danger').addClass('bi-heart');
-                    } else {
-                        $likeButton.removeClass('btn-outline-danger').addClass('btn-danger');
-                        $icon.removeClass('bi-heart').addClass('bi-heart-fill text-danger');
-                    }
-                    $likeButton.find('.likeCount').text(response.likeCount);
-                    $likeButton.data('liked', !isLiked);
-                } else {
-                    alert("좋아요 처리 중 오류가 발생했습니다.");
-                }
-            },
-            error: function() {
-                alert("좋아요 요청 실패!");
-            }
-        });
-    });
-
-    // 댓글 토글 버튼 클릭
-    $('.commentToggleBtn').click(function(e) {
-        e.preventDefault();
-        var postId = $(this).data('post-id');
-        var $commentList = $('.commentList[data-post-id="' + postId + '"]');
-        var $commentForm = $('.comment-form[data-post-id="' + postId + '"]');
-
-        if ($commentList.is(':visible')) {
-            $commentList.hide();
-            $commentForm.hide();
-        } else {
-            $commentList.show();
-            $commentForm.show();
-
-            $.ajax({
-                url: '/post/commentList',
-                type: 'POST',
-                data: { postId: postId },
-                success: function(response) {
-                    if (response.result === 'success') {
-                        var commentsHtml = '';
-                        response.comments.forEach(function(comment) {
-                            commentsHtml += '<div class="comment border-bottom py-1"><p class="mb-1"><strong>' + comment.nickname + '</strong>: ' + comment.content + '</p></div>';
-                        });
-                        $commentList.find('.comments').html(commentsHtml);
-                    } else {
-                        alert("댓글 조회 실패");
-                    }
-                },
-                error: function() {
-                    alert("댓글 조회 중 오류 발생");
-                }
-            });
-        }
-    });
-
-    // 댓글 작성 버튼 클릭
-    $('.submitComment').click(function(e) {
-        e.preventDefault();
-        var $btn = $(this);
-        var $form = $btn.closest('.comment-form');
-        var postId = $form.data('post-id');
-        var content = $form.find('.commentInput').val().trim();
-
-        if (!content) {
-            alert("댓글을 입력하세요.");
-            return;
-        }
-
-        $.ajax({
-            url: '/post/comment',
-            type: 'POST',
-            data: { postId: postId, content: content },
-            success: function(response) {
-                if (response.result === 'success') {
-                    var commentsHtml = '';
-                    response.comments.forEach(function(comment) {
-                        commentsHtml += '<div class="comment border-bottom py-1"><p class="mb-1"><strong>' + comment.nickname + '</strong>: ' + comment.content + '</p></div>';
-                    });
-                    $('.commentList[data-post-id="' + postId + '"] .comments').html(commentsHtml);
-                    $form.find('.commentInput').val('');
-                } else {
-                    alert(response.message || "댓글 작성 실패");
-                }
-            },
-            error: function() {
-                alert("댓글 작성 중 오류 발생");
-            }
-        });
-    });
-</script>
-
-</html>
+	<!DOCTYPE html>
+	<html xmlns:th="http://www.thymeleaf.org"
+	      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	      layout:decorate="~{layouts/origin}">
+	
+	<section layout:fragment="contents" class="contents container">
+	
+	    <div class="row justify-content-center">
+	        <div class="col-auto">
+	            <div th:each="post : ${posts}" class="feed bg-white border rounded p-3 mb-4 shadow-sm">
+	                <!-- 작성자 닉네임 -->
+	                <div class="d-flex align-items-center mb-2">
+	                    <div th:text="'@' + ${post.nickname}" class="font-weight-bold text-dark mr-2"></div>
+	                    <button class="text-primary btn btn-sm mr-2">팔로잉</button>
+	                    <!-- 삭제 모달 열기 버튼 -->
+	                    <button class="text-primary btn btn-sm ml-auto modalBtn"
+	                            th:data-id="${post.postId}" 
+	                            data-toggle="modal" data-target="#moreModal">. . .</button>
+	                </div>
+	
+	                <!-- 이미지 출력 -->
+	                <div class="photo border mb-2" style="overflow: hidden;">
+	                    <div th:each="img : ${post.imagePaths}" th:if="${post.imagePaths != null}">
+	                        <img th:src="@{${img}}"
+	                             th:alt="'Image ' + ${img}"
+	                             width="700" height="300"
+	                             class="w-100 border border-secondary"
+	                             style="object-fit: cover;" />
+	                    </div>
+	                </div>
+	
+	                <!-- 게시글 제목 -->
+	                <div th:text="${post.title}" class="main font-weight-bold mb-2" style="font-size: 1.25rem;"></div>
+	
+	                <!-- 옵션 (좋아요 버튼, 댓글 버튼) -->
+	                <div class="option d-flex align-items-center gap-3 mb-2">
+	                    <button type="button"
+	                            class="btn btn-sm likeBtn"
+	                            th:class="${post.isLiked} ? 'btn btn-danger btn-sm likeBtn' : 'btn btn-outline-danger btn-sm likeBtn'"
+	                            th:data-post-id="${post.postId}"
+	                            th:data-liked="${post.isLiked != null ? post.isLiked : false}">
+	                        <i th:class="${post.isLiked} ? 'bi bi-heart-fill text-danger' : 'bi bi-heart'"></i>
+	                        좋아요 <span class="likeCount" th:text="${post.likeCount}">0</span>
+	                    </button>
+	
+	                    <button type="button" class="btn btn-outline-secondary btn-sm commentToggleBtn"
+	                            th:data-post-id="${post.postId}">
+	                        <i class="bi bi-chat"></i> 댓글
+	                    </button>
+	                </div>
+	
+	                <!-- 댓글 목록 (초기엔 숨김) -->
+	                <div class="commentList mt-2 border-top pt-2"
+	                     th:attr="data-post-id=${post.postId}" style="display: none;">
+	                    <div class="comments" style="width: 100%;">
+	                        <div th:each="comment : ${post.comments}" class="comment border-bottom py-1">
+	                            <p class="mb-1"><strong th:text="${comment.nickname}">작성자</strong>: <span th:text="${comment.content}">댓글 내용</span></p>
+	                        </div>
+	                    </div>
+	                </div>
+	
+	                <!-- 댓글 입력 폼 (초기엔 숨김) -->
+	                <div class="comment-form d-flex align-items-start mt-2"
+	                     th:attr="data-post-id=${post.postId}" style="display: none; gap: 0.5rem;">
+	                    <textarea class="form-control form-control-sm commentInput"
+	                              placeholder="댓글을 입력하세요" rows="2" style="flex-grow: 1;"></textarea>
+	                    <button type="button" class="btn btn-secondary btn-sm submitComment"
+	                            style="white-space: nowrap; height: calc(2.25rem + 2px);">
+	                        작성
+	                    </button>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+	    <!-- 모달은 반복문 밖에 딱 1개만 둠 -->
+		<div class="modal fade" id="moreModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+		  <div class="modal-dialog modal-dialog-centered" role="document">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <h5 class="modal-title" id="exampleModalLongTitle">삭제하시겠습니까?</h5>
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          <span aria-hidden="true">&times;</span>
+		        </button>
+		      </div>
+		      <div class="modal-body">
+		        되돌릴 수 없습니다!
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+		        <button id="deleteBtn" type="button" class="btn btn-primary">삭제</button>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+	</section>
+	
+	
+	
+	<script layout:fragment="script">
+	  // 삭제 버튼 클릭 시 모달에 postId 저장
+	  $(".modalBtn").click(function() {
+	    let postId = $(this).data("id");
+	    $("#moreModal").data("post-id", postId);
+	  });
+	
+	  // 모달 내 삭제 확정 버튼 클릭 시 ajax 호출
+	  $("#deleteBtn").click(function() {
+	    var id = $("#moreModal").data("post-id");
+	
+	    $.ajax({
+	      type: "DELETE",
+	      url: "/post/delete",
+	      data: { "postId": id },
+	      success: function(response) {
+	        if (response.result === "success") {
+	          location.href = "/post/list-view";
+	        } else {
+	          alert("삭제 실패!");
+	        }
+	      },
+	      error: function() {
+	        alert("삭제 에러!");
+	      }
+	    });
+	  });
+	
+	  // 이하 좋아요, 댓글 스크립트는 그대로 사용하세요
+	  $('.likeBtn').click(function(e) {
+	    e.preventDefault();
+	    var $likeButton = $(this);
+	    var postId = $likeButton.data('post-id');
+	    var isLiked = $likeButton.data('liked');
+	    var $icon = $likeButton.find('i');
+	
+	    $.ajax({
+	      url: '/post/like',
+	      type: 'POST',
+	      data: { postId: postId },
+	      success: function(response) {
+	        if (response.status === 'success') {
+	          if (isLiked) {
+	            $likeButton.removeClass('btn-danger').addClass('btn-outline-danger');
+	            $icon.removeClass('bi-heart-fill text-danger').addClass('bi-heart');
+	          } else {
+	            $likeButton.removeClass('btn-outline-danger').addClass('btn-danger');
+	            $icon.removeClass('bi-heart').addClass('bi-heart-fill text-danger');
+	          }
+	          $likeButton.find('.likeCount').text(response.likeCount);
+	          $likeButton.data('liked', !isLiked);
+	        } else {
+	          alert("좋아요 처리 중 오류가 발생했습니다.");
+	        }
+	      },
+	      error: function() {
+	        alert("좋아요 요청 실패!");
+	      }
+	    });
+	  });
+	
+	  $('.commentToggleBtn').click(function(e) {
+	    e.preventDefault();
+	    var postId = $(this).data('post-id');
+	    var $commentList = $('.commentList[data-post-id="' + postId + '"]');
+	    var $commentForm = $('.comment-form[data-post-id="' + postId + '"]');
+	
+	    if ($commentList.is(':visible')) {
+	      $commentList.hide();
+	      $commentForm.hide();
+	    } else {
+	      $commentList.show();
+	      $commentForm.show();
+	
+	      $.ajax({
+	        url: '/post/commentList',
+	        type: 'POST',
+	        data: { postId: postId },
+	        success: function(response) {
+	          if (response.result === 'success') {
+	            var commentsHtml = '';
+	            response.comments.forEach(function(comment) {
+	              commentsHtml += '<div class="comment border-bottom py-1"><p class="mb-1"><strong>' + comment.nickname + '</strong>: ' + comment.content + '</p></div>';
+	            });
+	            $commentList.find('.comments').html(commentsHtml);
+	          } else {
+	            alert("댓글 조회 실패");
+	          }
+	        },
+	        error: function() {
+	          alert("댓글 조회 중 오류 발생");
+	        }
+	      });
+	    }
+	  });
+	
+	  $('.submitComment').click(function(e) {
+	    e.preventDefault();
+	    var $btn = $(this);
+	    var $form = $btn.closest('.comment-form');
+	    var postId = $form.data('post-id');
+	    var content = $form.find('.commentInput').val().trim();
+	
+	    if (!content) {
+	      alert("댓글을 입력하세요.");
+	      return;
+	    }
+	
+	    $.ajax({
+	      url: '/post/comment',
+	      type: 'POST',
+	      data: { postId: postId, content: content },
+	      success: function(response) {
+	        if (response.result === 'success') {
+	          var commentsHtml = '';
+	          response.comments.forEach(function(comment) {
+	            commentsHtml += '<div class="comment border-bottom py-1"><p class="mb-1"><strong>' + comment.nickname + '</strong>: ' + comment.content + '</p></div>';
+	          });
+	          $('.commentList[data-post-id="' + postId + '"] .comments').html(commentsHtml);
+	          $form.find('.commentInput').val('');
+	        } else {
+	          alert(response.message || "댓글 작성 실패");
+	        }
+	      },
+	      error: function() {
+	        alert("댓글 작성 중 오류 발생");
+	      }
+	    });
+	  });
+	</script>
+	
+	</html>

@@ -56,10 +56,33 @@ public class FileManager {
 		
 		return "/images/"+ directoryName + "/" + file.getOriginalFilename();
 		
-		
-		
-		
-		
 	}
+	// 파일 삭제
+		public static boolean removeFile(String filePath) {
+			
+			if(filePath == null) {
+				return false;
+			}
+			String fullFilePath = FILE_UPLOAD_PATH + filePath.replace("/images", "");
+			
+			Path path = Paths.get(fullFilePath);
+			
+			//상위 경로
+			Path dirPath = path.getParent();
+			
+			try {
+				Files.delete(path);
+				Files.delete(dirPath);
+				
+			} catch (IOException e) {
+				
+				e.printStackTrace();
+				return false;
+			}
+			return true;
+			
+			
+			
+		}
 
 }

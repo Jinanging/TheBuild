@@ -1,5 +1,7 @@
 package com.jinanging.thebuild.post.service;
 
+
+
 import java.util.List;
 import java.util.Optional;
 
@@ -14,6 +16,7 @@ import com.jinanging.thebuild.post.repository.PostRepository;
 import com.jinanging.thebuild.user.service.UserService;
 
 import jakarta.transaction.Transactional;
+
 
 @Service
 @Transactional
@@ -35,6 +38,23 @@ public class PostService {
     public List<Post> getAllPostsWithImages() {
         return postRepository.findAllPostsWithImages();
     }
+    
+//    public boolean deletPost(long id) {
+//		Optional<PostDto> optionalPost = postRepository.findById(id);
+//		
+//		if(optionalPost.isPresent()) {
+//			PostDto postdto = optionalPost.get();
+//			
+//			FileManager.removeFile(postdto.());
+//			
+//			postRepository.delete(post);
+//			
+//			return true;
+//		}
+//		else {
+//			return false;
+//		}
+//	}
 
     
     
